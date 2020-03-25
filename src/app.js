@@ -14,4 +14,5 @@ console.log(process.env.PASSWORD);
 //get post put delete crud
 app.use("/listings", listingRouter); //any req will be sent to this file
 
-app.listen(8081, () => console.log("Running on port 8081")); //starts server on port 8080
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Running on port ${PORT}`)); //starts server on port 8080
