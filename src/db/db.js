@@ -5,7 +5,7 @@ const connectDB = async () => {
   try {
     const conn = await mongoose.connect(
       //so that it doesn't return a promise
-      "mongodb+srv://AppClient:appclient4155@4155-kqka9.mongodb.net/binz?retryWrites=true&w=majority",
+      process.env.DB_CONNECTION,
       { useNewUrlParser: true, useUnifiedTopology: true } //get rid of errors
     );
     console.log(`Connected to ${conn.connection.host}`); //Show once connected to db

@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express"); //importing is like making variables.
 const listingRouter = require("./controllers/ListingController");
 const connectDB = require("./db/db");
@@ -8,7 +10,7 @@ connectDB();
 
 app.use("/uploads", express.static("uploads"));
 app.use(express.json()); //able to read json from req
-
+console.log(process.env.PASSWORD);
 //get post put delete crud
 app.use("/listings", listingRouter); //any req will be sent to this file
 
