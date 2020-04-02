@@ -4,11 +4,13 @@ const express = require("express"); //importing is like making variables.
 const listingRouter = require("./controllers/ListingController");
 const connectDB = require("./db/db");
 const userRouter = require("./controllers/userController");
+const cors = require("cors");
 
 const app = express(); //starting point for app.js
 
 connectDB();
 
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(express.json()); //able to read json from req
 app.use("/user", userRouter);
