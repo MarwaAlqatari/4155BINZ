@@ -3,16 +3,15 @@ require("dotenv").config();
 const express = require("express"); //importing is like making variables.
 const listingRouter = require("./controllers/ListingController");
 const connectDB = require("./db/db");
-<<<<<<< HEAD
+HEAD
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require ("mongoose");
 
 const userRoutes = require('./api/routes/user');
-=======
+
 const userRouter = require("./controllers/userController");
 const cors = require("cors");
->>>>>>> 9e18b06d3c3f9350a77e96288e22df43832aae30
 
 const app = express(); //starting point for app.js
 
