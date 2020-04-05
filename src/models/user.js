@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+ HEAD
 
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -6,9 +7,10 @@ const userSchema = mongoose.Schema({
         type: String, 
         required: true, 
         unique: true, 
-        match: /\S+@\S+\.\S+/ 
+        match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ 
     },
     password: { type: String, required: true}
-});
+
+//const express = require("express");
 
 module.exports = mongoose.model('User', userSchema);
