@@ -26,7 +26,6 @@ const listingSchema = new mongoose.Schema({
     required: true
   },
   location: {
-    //required is if the field is needed (like additional comments isnt) and i can add extra stuff like messages if there's a field that is empty
     type: String,
     required: true
   },
