@@ -87,6 +87,7 @@ router.post('/login', (req, res, next) => {
         res.status(500).json({
             error: err
         });
+    }); 
 });
 
 router.delete('/:userId', (req, res, next) => {
