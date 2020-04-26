@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require ("mongoose");
 
-const userRoutes = require('./routes/user');
+//const userRoutes = require('./routes/user');
 
 const userRouter = require("./controllers/userController");
 const cors = require("cors");
@@ -18,7 +18,7 @@ connectDB();
 
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
-app.use("/user", listingRouter); //user route
+//app.use("/user", listingRouter); //user route
 app.use(express.json()); //able to read json from req
 app.use("/user", userRouter);
 console.log(process.env.PASSWORD);
