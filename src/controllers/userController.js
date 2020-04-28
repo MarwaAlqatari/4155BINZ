@@ -6,8 +6,6 @@ const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 
 
-//const UserSchema = require('../db/userSchema');
-
 const {
   getUser,
   getUsers,
@@ -18,7 +16,7 @@ const {
 
 
 router.post("/", async (req, res) => {
-  //add listing
+  //add user
   //take in data from user
   const {
     email,
