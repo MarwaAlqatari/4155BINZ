@@ -21,6 +21,7 @@ app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(express.json()); //able to read json from req
 console.log(process.env.PASSWORD);
+//sign in / sign up
 app.use("/users", userRouter);
 //get post put delete crud
 app.use("/listings", listingRouter); //any req will be sent to this file

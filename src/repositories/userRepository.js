@@ -26,6 +26,7 @@ const addUser = async user => {
   });
 
   return new User(
+    insertedUser.id,
     insertedUser.email,
     insertedUser.password
   ); //convert from doc type to listing type

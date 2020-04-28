@@ -3,11 +3,10 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const User = require("../models/user");
 
 
 //const UserSchema = require('../db/userSchema');
-
-
 
 const {
   getUser,
@@ -18,7 +17,7 @@ const {
 } = require("../repositories/userRepository");
 
 
-router.post("/users", async (req, res) => {
+router.post("/", async (req, res) => {
   //add listing
   //take in data from user
   const {
@@ -34,7 +33,7 @@ router.post("/users", async (req, res) => {
   return res.status(201).json(insertedUser);
 });
 
-router.get("/users/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params; //get id
   console.log(id);
   const user = await getUser(id);
