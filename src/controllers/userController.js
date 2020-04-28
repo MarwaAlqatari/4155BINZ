@@ -4,13 +4,61 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-//The user schema used to be in user.js(models) but I made a new user schema file and put it in the db folder. Made a user model too in the models folder
-//I also made a userRepository in the repositories folder.
-//I just added these to try but we could also go back to what we had. Both should work fine
+
+//const UserSchema = require('../db/userSchema');
 
 
-const UserSchema = require('../db/userSchema');
 
+const {
+  getUser,
+  getUsers,
+  addUser,
+  removeUser,
+  putUser
+} = require("../repositories/userRepository");
+
+
+router.post("/users", async (req, res) => {
+  //add listing
+  //take in data from user
+  const {
+    email,
+    password
+  } = req.body;
+  const user = new User(
+    null,
+    email,
+    password
+  ); //creating object
+  const insertedUser = await addUser(user);
+  return res.status(201).json(insertedUser);
+});
+
+router.get("/users/:id", async (req, res) => {
+  const { id } = req.params; //get id
+  console.log(id);
+  const user = await getUser(id);
+
+  if (!user) {
+    return res.sendStatus(404);
+  }
+
+  return res.json(user);
+});
+
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params; //get id
+  await removeUser(id);
+  res.sendStatus(200);
+});
+
+module.exports = router;
+
+
+
+
+
+/*
 router.post('/signup', (req, res, next) => {
         UserSchema.find({email: req.body.email})
         .exec()
@@ -114,58 +162,9 @@ router.delete('/:userId', (req, res, next) => {
 module.exports = router;
 
 
-/* BASED ON LISTING CONTROLLER
-const express = require("express");
-const Listing = require("../models/user");
-
-const {
-  getUser,
-  getUsers,
-  addUser,
-  removeUser,
-  putUser
-} = require("../repositories/userRepository");
-
-const router = express.Router(); //all routes are added to /listings
-
-router.post("/", async (req, res) => {
-  //add listing
-  //take in data from user
-  const {
-    email,
-    password
-  } = req.body;
-  const user = new User(
-    null,
-    email,
-    password
-  ); //creating object
-  const insertedUser = await addUser(user);
-  return res.status(201).json(insertedUser);
-});
-
-router.get("/:id", async (req, res) => {
-  const { id } = req.params; //get id
-  console.log(id);
-  const user = await getUser(id);
-
-  if (!user) {
-    return res.sendStatus(404);
-  }
-
-  return res.json(user);
-});
-
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params; //get id
-  await removeUser(id);
-  res.sendStatus(200);
-});
-
-module.exports = router;
-
-
 */
+
+
 
 
 /*
