@@ -72,7 +72,7 @@ router.post("/", upload.single("listingImage"), async (req, res) => {
   return res.status(201).json(insertedListing);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", upload.single("listingImage"), async (req, res) => {
   //Update listing
   const {
     name,
