@@ -8,6 +8,7 @@ const getUsers = async () => {
       new User(
         u.id,
         u.email,
+        u.name,
         u.password
       )
   );
@@ -23,14 +24,16 @@ const addUser = async user => {
   try {
     const insertedUser = await UserSchema.create({
       email: user.email,
+      name: user.name,
       password: user.password
     });
 
     return new User(
       insertedUser.id,
       insertedUser.email,
+      insertedUser.name,
       insertedUser.password
-    ); //convert from doc type to listing type
+    ); //convert from doc type to user type
 
   }
   catch (e) {

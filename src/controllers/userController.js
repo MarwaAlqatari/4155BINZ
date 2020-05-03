@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
+const UserSchema = require("../db/userSchema");
 
 
 const {
@@ -21,13 +22,17 @@ router.post("/", async (req, res) => {
   try{
   const {
     email,
+    name,
     password
-  } = req.body.users;
+  } = req.body;
   const user = new User(
     null,
+    name,
     email,
     password
   ); //creating object
+
+
   console.log(user);
   const insertedUser = await addUser(user);
   return res.status(201).json(insertedUser);
