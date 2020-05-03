@@ -18,17 +18,22 @@ const {
 router.post("/", async (req, res) => {
   //add user
   //take in data from user
+  try{
   const {
     email,
     password
-  } = req.body;
+  } = req.body.users;
   const user = new User(
     null,
     email,
     password
   ); //creating object
+  console.log(user);
   const insertedUser = await addUser(user);
   return res.status(201).json(insertedUser);
+  } catch(e) {
+    console.log('Error:', e.message);
+  }
 });
 
 router.get("/:id", async (req, res) => {

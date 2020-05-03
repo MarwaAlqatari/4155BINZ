@@ -10,7 +10,7 @@ const getUsers = async () => {
         u.email,
         u.password
       )
-  ); 
+  );
 };
 
 const getUser = async id => {
@@ -20,16 +20,22 @@ const getUser = async id => {
 };
 
 const addUser = async user => {
-  const insertedUser = await UserSchema.create({
-    email: user.email,
-    password: user.password
-  });
+  try {
+    const insertedUser = await UserSchema.create({
+      email: user.email,
+      password: user.password
+    });
 
-  return new User(
-    insertedUser.id,
-    insertedUser.email,
-    insertedUser.password
-  ); //convert from doc type to listing type
+    return new User(
+      insertedUser.id,
+      insertedUser.email,
+      insertedUser.password
+    ); //convert from doc type to listing type
+
+  }
+  catch (e) {
+    console.log('Error:', e.message)
+  };
 };
 
 const putUser = async (id, user) => {

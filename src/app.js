@@ -7,19 +7,20 @@ const connectDB = require("./db/db");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require ("mongoose");
-
-//const userRoutes = require('./routes/user');
-
-
 const cors = require("cors");
 
 const app = express(); //starting point for app.js
 
 connectDB();
 
+//app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.json());
+
+
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(express.json()); //able to read json from req
+
 console.log(process.env.PASSWORD);
 //sign in / sign up
 app.use("/users", userRouter);
