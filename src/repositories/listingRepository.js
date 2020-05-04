@@ -3,32 +3,19 @@ const ListingSchema = require("../db/listingSchema");
 
 const getListings = async () => {
   const listings = await ListingSchema.find().exec();
-  return listings.map(
-    l =>
-      new Listing(
-        l.id,
-        l.name,
-        l.phone,
-        l.email,
-        l.duration,
-        l.rentPerMonth,
-        l.location,
-        l.pets,
-        l.furnished,
-        l.startDate,
-        l.endDate,
-        l.comments,
-        l.listingImage
-      )
-  ); //so that it uses listing.js and not the mongoose format
+  return listings.map(l => convertToModel(l)); //so that it uses listing.js and not the mongoose format
 };
 
 const getListing = async id => {
   //id is parameter
   const listing = await ListingSchema.findById(id).exec();
-  return listing;
+  return convertToModel(listing);
 };
 
+const getListingsByUserID = async userID => {
+  const listings = await ListingSchema.find({ userID });
+  return listings.map(l => convertToModel(l));
+};
 const addListing = async listing => {
   const insertedListing = await ListingSchema.create({
     name: listing.name,
@@ -42,23 +29,10 @@ const addListing = async listing => {
     startDate: listing.startDate,
     endDate: listing.endDate,
     comments: listing.comments,
-    listingImage: listing.listingImage
+    listingImage: listing.listingImage,
+    userID: listing.userID
   });
-  return new Listing(
-    insertedListing.id,
-    insertedListing.name,
-    insertedListing.phone,
-    insertedListing.email,
-    insertedListing.duration,
-    insertedListing.rentPerMonth,
-    insertedListing.location,
-    insertedListing.pets,
-    insertedListing.furnished,
-    insertedListing.startDate,
-    insertedListing.endDate,
-    insertedListing.comments,
-    insertedListing.listingImage
-  ); //convert from doc type to listing type
+  return convertToModel(insertedListing);
 };
 
 const putListing = async (id, listing) => {
@@ -67,11 +41,30 @@ const putListing = async (id, listing) => {
     id,
     listing
   ).exec();
-  return updatedListing;
+  return convertToModel(updatedListing);
 };
 
 const removeListing = async id => {
   await ListingSchema.findByIdAndDelete(id).exec();
+};
+
+const convertToModel = listing => {
+  return new Listing(
+    listing._id,
+    listing.name,
+    listing.phone,
+    listing.email,
+    listing.duration,
+    listing.rentPerMonth,
+    listing.location,
+    listing.pets,
+    listing.furnished,
+    listing.startDate,
+    listing.endDate,
+    listing.comments,
+    listing.listingImage,
+    listing.userID
+  ); //convert from doc type to listing type
 };
 
 module.exports = {
@@ -79,5 +72,6 @@ module.exports = {
   getListing,
   addListing,
   removeListing,
-  putListing
+  putListing,
+  getListingsByUserID
 };

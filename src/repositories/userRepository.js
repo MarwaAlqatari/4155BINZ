@@ -3,21 +3,20 @@ const UserSchema = require("../db/userSchema");
 
 const getUsers = async () => {
   const users = await UserSchema.find().exec();
-  return users.map(
-    u =>
-      new User(
-        u.id,
-        u.email,
-        u.name,
-        u.password
-      )
-  );
+  return users.map(u => new User(u.id, u.email, u.name, u.password));
 };
 
 const getUser = async id => {
   //id is parameter
   const user = await UserSchema.findById(id).exec();
-  return user;
+  return new User(user._id, user.email, user.name, user.password);
+};
+
+const getUserByEmail = async email => {
+  const user = await UserSchema.findOne({ email });
+  return user != null
+    ? new User(user._id, user.email, user.name, user.password)
+    : null;
 };
 
 const addUser = async user => {
@@ -34,19 +33,14 @@ const addUser = async user => {
       insertedUser.name,
       insertedUser.password
     ); //convert from doc type to user type
-
+  } catch (e) {
+    console.log("Error:", e.message);
   }
-  catch (e) {
-    console.log('Error:', e.message)
-  };
 };
 
 const putUser = async (id, user) => {
   //id is parameter
-  const updatedUser = await UserSchema.findByIdAndUpdate(
-    id,
-    user
-  ).exec();
+  const updatedUser = await UserSchema.findByIdAndUpdate(id, user).exec();
   return updatedUser;
 };
 
@@ -59,5 +53,6 @@ module.exports = {
   getUser,
   addUser,
   removeUser,
-  putUser
+  putUser,
+  getUserByEmail
 };

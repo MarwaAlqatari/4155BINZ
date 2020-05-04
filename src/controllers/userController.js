@@ -1,49 +1,76 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const UserSchema = require("../db/userSchema");
-
 
 const {
   getUser,
   getUsers,
   addUser,
   removeUser,
-  putUser
+  putUser,
+  getUserByEmail
 } = require("../repositories/userRepository");
-
 
 router.post("/", async (req, res) => {
   //add user
   //take in data from user
-  try{
-  const {
-    email,
-    name,
-    password
-  } = req.body;
-  const user = new User(
-    null,
-    name,
-    email,
-    password
-  ); //creating object
+  try {
+    const { email, name, password } = req.body;
 
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-  console.log(user);
-  const insertedUser = await addUser(user);
-  return res.status(201).json(insertedUser);
-  } catch(e) {
-    console.log('Error:', e.message);
+    const user = new User(null, email, name, hashedPassword); //creating object
+
+    console.log(user);
+    const insertedUser = await addUser(user);
+    const token = jwt.sign({ userID: user.id }, process.env.JWT_SECRET);
+    return res.status(201).json({ token });
+  } catch (e) {
+    console.log("Error:", e.message);
   }
+});
+
+router.get("/me", async (req, res) => {
+  const token = req.query.token;
+  let userID;
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    userID = decodedToken.userID;
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+  const user = await getUser(userID);
+  return res.json({ email: user.email, name: user.name });
+});
+
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params; //get id
+  await removeUser(id);
+  res.sendStatus(200);
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await getUserByEmail(email);
+
+  if (user) {
+    const match = await bcrypt.compare(password, user.password);
+    if (match) {
+      const token = jwt.sign({ userID: user.id }, process.env.JWT_SECRET);
+      return res.json({ success: true, token });
+    }
+  }
+
+  return res.json({ success: false });
 });
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params; //get id
-  console.log(id);
   const user = await getUser(id);
 
   if (!user) {
@@ -53,17 +80,7 @@ router.get("/:id", async (req, res) => {
   return res.json(user);
 });
 
-router.delete("/users/:id", async (req, res) => {
-  const { id } = req.params; //get id
-  await removeUser(id);
-  res.sendStatus(200);
-});
-
 module.exports = router;
-
-
-
-
 
 /*
 router.post('/signup', (req, res, next) => {
@@ -170,9 +187,6 @@ module.exports = router;
 
 
 */
-
-
-
 
 /*
 const express = require("express");

@@ -16,10 +16,6 @@ const listingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  duration: {
-    type: String,
-    required: true
-  },
   rentPerMonth: {
     //required is if the field is needed (like additional comments isnt) and i can add extra stuff like messages if there's a field that is empty
     type: Number,
@@ -57,6 +53,10 @@ const listingSchema = new mongoose.Schema({
   listingImage: {
     //required is if the field is needed (like additional comments isnt) and i can add extra stuff like messages if there's a field that is empty
     type: String,
+    required: true
+  },
+  userID: {
+    type: mongoose.Types.ObjectId,
     required: true
   }
 });

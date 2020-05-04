@@ -1,6 +1,15 @@
 const express = require("express");
 const Listing = require("../models/listing");
 const multer = require("multer");
+const jwt = require("jsonwebtoken");
+const {
+  getListing,
+  getListings,
+  addListing,
+  removeListing,
+  putListing,
+  getListingsByUserID
+} = require("../repositories/listingRepository");
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -26,14 +35,6 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-const {
-  getListing,
-  getListings,
-  addListing,
-  removeListing,
-  putListing
-} = require("../repositories/listingRepository");
-
 const router = express.Router(); //all routes are added to /listings
 
 router.post("/", upload.single("listingImage"), async (req, res) => {
@@ -50,8 +51,18 @@ router.post("/", upload.single("listingImage"), async (req, res) => {
     furnished,
     startDate,
     endDate,
-    comments
+    comments,
+    token
   } = req.body;
+
+  let userID;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userID = decoded.userID;
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+
   const listingImage = req.file.path;
   const listing = new Listing(
     null,
@@ -66,12 +77,56 @@ router.post("/", upload.single("listingImage"), async (req, res) => {
     startDate,
     endDate,
     comments,
-    listingImage
+    listingImage,
+    userID
   ); //creating object
   const insertedListing = await addListing(listing);
   return res.status(201).json(insertedListing);
 });
 
+router.get("/", async (req, res) => {
+  //get '/' means get all the listings
+  const listings = await getListings(); // getes list of listings
+  return res.json(listings);
+});
+
+router.get("/owned", async (req, res) => {
+  const token = req.query.token;
+  let userID;
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    userID = decodedToken.userID;
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+  const listings = await getListingsByUserID(userID);
+  return res.json(listings);
+});
+
+router.get("/:id", async (req, res) => {
+  const { id } = req.params; //get id
+  const listing = await getListing(id);
+
+  if (!listing) {
+    return res.sendStatus(404);
+  }
+
+  return res.json(listing);
+});
+
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params; //get id
+  const listing = await getListing(id);
+  try {
+    const decodedToken = jwt.verify(req.query.token, process.env.JWT_SECRET);
+    if (listing.userID.toString() !== decodedToken.userID)
+      return res.sendStatus(401);
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+  await removeListing(id);
+  res.sendStatus(200);
+});
 router.put("/:id", async (req, res) => {
   //Update listing
   const {
@@ -85,7 +140,8 @@ router.put("/:id", async (req, res) => {
     furnished,
     startDate,
     endDate,
-    comments
+    comments,
+    token
   } = req.body;
   const listingImage = req.file.path;
   const { id } = req.params;
@@ -104,32 +160,15 @@ router.put("/:id", async (req, res) => {
     comments,
     listingImage
   );
+  const existingListing = await getListing(id);
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    if (existingListing.userID.toString() !== decodedToken.userID)
+      return res.sendStatus(401);
+  } catch (err) {
+    return res.sendStatus(401);
+  }
   const updatedListing = await putListing(id, listing);
   return res.status(201).json(updatedListing);
 });
-
-router.get("/", async (req, res) => {
-  //get '/' means get all the listings
-  const listings = await getListings(); // getes list of listings
-  return res.json(listings);
-});
-
-router.get("/:id", async (req, res) => {
-  const { id } = req.params; //get id
-  console.log(id);
-  const listing = await getListing(id);
-
-  if (!listing) {
-    return res.sendStatus(404);
-  }
-
-  return res.json(listing);
-});
-
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params; //get id
-  await removeListing(id);
-  res.sendStatus(200);
-});
-
 module.exports = router;

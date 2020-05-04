@@ -12,7 +12,8 @@ class Listing {
     startDate,
     endDate,
     comments,
-    listingImage
+    listingImage,
+    userID
   ) {
     this.id = id;
     this.name = name;
@@ -27,6 +28,7 @@ class Listing {
     this.endDate = endDate;
     this.comments = comments;
     this.listingImage = listingImage;
+    this.userID = userID;
   }
 }
 

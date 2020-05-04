@@ -1,2 +1,0 @@
-DB_CONNECTION=mongodb+srv://AppClient:appclient4155@4155cluster-kqka9.mongodb.net/BINZ_dev?retryWrites=true&w=majority
-PORT=8080
