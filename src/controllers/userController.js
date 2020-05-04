@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
 
     console.log(user);
     const insertedUser = await addUser(user);
-    const token = jwt.sign({ userID: user.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userID: insertedUser.id }, process.env.JWT_SECRET);
     return res.status(201).json({ token });
   } catch (e) {
     console.log("Error:", e.message);

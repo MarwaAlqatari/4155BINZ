@@ -146,6 +146,16 @@ router.put("/:id", upload.single("listingImage"), async (req, res) => {
   } = req.body;
   const listingImage = req.file.path;
   const { id } = req.params;
+  const existingListing = await getListing(id);
+  let userID;
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    userID = decodedToken.userID;
+    if (existingListing.userID.toString() !== decodedToken.userID)
+      return res.sendStatus(401);
+  } catch (err) {
+    return res.sendStatus(401);
+  }
   const listing = new Listing(
     null,
     name,
@@ -159,16 +169,10 @@ router.put("/:id", upload.single("listingImage"), async (req, res) => {
     startDate,
     endDate,
     comments,
-    listingImage
+    listingImage,
+    userID
   );
-  const existingListing = await getListing(id);
-  try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    if (existingListing.userID.toString() !== decodedToken.userID)
-      return res.sendStatus(401);
-  } catch (err) {
-    return res.sendStatus(401);
-  }
+
   const updatedListing = await putListing(id, listing);
   return res.status(201).json(updatedListing);
 });
