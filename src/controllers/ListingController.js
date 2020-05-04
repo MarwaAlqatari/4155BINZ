@@ -127,7 +127,8 @@ router.delete("/:id", async (req, res) => {
   await removeListing(id);
   res.sendStatus(200);
 });
-router.put("/:id", async (req, res) => {
+
+router.put("/:id", upload.single("listingImage"), async (req, res) => {
   //Update listing
   const {
     name,
